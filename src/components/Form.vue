@@ -21,31 +21,40 @@
 <script>
 export default {
   name: "Form",
-  data: () => ({
-    formData: {
+  data() {
+     let validValue = (rule, value, callback) => {
+        if (this.checkValueZero) {
+            callback(new Error('Value mustn\'t be a zero!'))
+        } else {
+            callback()
+        }
+    }
+    return {
+      formData: {
       type: "INCOME",
       comment: "",
       value: 0
     },
-    rules: {
-      type: [
-        { required: true, message: "Please select type", trigger: "blur" }
-      ],
-      comment: [
-        { required: true, message: "Please input comment", trigger: "change" }
-      ],
-      value: [
-        { required: true, message: "Please input value", trigger: "change" },
-        { type: "number", message: "Value must be a number", trigger: "change" }
-      ]
+      rules: {
+        type: [
+          { required: true, message: "Please select type", trigger: "blur" }
+        ],
+        comment: [
+          { required: true, message: "Please input comment", trigger: "change" }
+        ],
+        value: [
+          { required: true, message: "Please input value", trigger: "change" },
+          { type: "number", message: "Value must be a number", trigger: "change" },
+          {validator: validValue, trigger: 'change'}
+        ]
+      }
     }
-  }),
+  },
   methods: {
     onSubmit() {
       if (this.checkOutComeType) {
         this.formData.value = -this.formData.value
       }
-      this.validateField()
       this.$refs.addItemForm.validate(valid => {
         if (valid) {
           this.$emit("submitForm", { ...this.formData });
@@ -53,17 +62,16 @@ export default {
         }
       });
     },
-    validateField () {
-      if (this.formData.value === 0) {
-        console.log('da')
-      }
-    }
+
   },
   computed: {
     checkOutComeType() {
       return this.formData.type === 'OUTCOME'
+    },
+    checkValueZero () {
+      return this.formData.value === 0;
     }
-  },
+  }
 };
 </script>
 
