@@ -1,4 +1,4 @@
-<template lang="">
+<template>
   <el-dialog
     title="Notice"
     v-model="centerDialogVisible"
@@ -12,6 +12,9 @@
         <el-button @click="cancelPop">Cancel</el-button>
         <el-button type="primary" @click="confirmPop">Confirm</el-button>
       </span>
+      <div class="checkbox">
+        <el-checkbox v-model="checked">Dont show this message again</el-checkbox>
+        </div>
     </template>
   </el-dialog>
 </template>
@@ -22,15 +25,17 @@ export default {
    data() {
       return {
         centerDialogVisible: false,
+        checked: false
       };
   },
   methods: {
     cancelPop() {
       this.$emit('cancel-del')
+      this.checked = false
     },
     confirmPop() {
-      this.$emit('confirm-del')
-    }
+      this.$emit('confirm-del', this.checked)
+    },
   },
   watch: {
     visible (value) {
@@ -39,7 +44,7 @@ export default {
       } else if(value === false) {
         this.centerDialogVisible = value
       }
-    }
+    },
   }
 };
 </script>
@@ -47,5 +52,8 @@ export default {
 .el-dialog__body {
   text-transform: uppercase;
   text-align: center !important;
+}
+.checkbox {
+  margin-top: 20px;
 }
 </style>

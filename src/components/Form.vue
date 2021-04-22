@@ -63,7 +63,7 @@ export default {
     checkOutComeType() {
       return this.formData.type === 'OUTCOME'
     }
-  }
+  },
 };
 </script>
 

@@ -11,7 +11,7 @@
       :item_data="item"
       ></budget-list-item>
     </budget-list>
-    <confirm-del :visible="visible" @confirm-del="confirmDelete" @cancel-del="cancelDel"></confirm-del>
+    <confirm-del v-if="!checked" :visible="visible" @confirm-del="confirmDelete" @cancel-del="cancelDel"></confirm-del>
 </div>
 </template>
 
@@ -56,6 +56,7 @@ export default {
       visible: false,
       idItem: null,
       permission: 'all',
+      checked: null,
       list: {
         1: {
           type: "INCOME",
@@ -73,11 +74,18 @@ export default {
 
     }
   },
+  mounted () {
+    if (localStorage.getItem('list')) {
+      this.list = JSON.parse(localStorage.getItem('list'));
+    }
+  },
   methods: {
     openPop (id) {
       this.visible = true
       this.idItem = id
-      console.log(this.sortedItems)
+      if (this.checked) {
+        this.deleteItem(id)
+      }
     },
     deleteItem(id) {
         for (let i in this.list) {
@@ -86,16 +94,15 @@ export default {
             break
           }
         }
+        localStorage.setItem('list', JSON.stringify(this.list))
     },
     cancelDel () {
       this.visible = false
     },
-    confirmDelete () {
+    confirmDelete (checked) {
       this.visible = false
+      this.checked = checked
       this.deleteItem(this.idItem)
-    },
-     mounted() {
-
     },
     addNewItem(data) {
       const newObj = {
@@ -103,6 +110,7 @@ export default {
           id: (Math.random() * 10000).toFixed(0)
       }
       this.list[newObj.id] = newObj
+      localStorage.setItem('list', JSON.stringify(this.list))
     },
     incomePer() {
       this.permission = 'income'
